@@ -1,0 +1,91 @@
+---
+    - name: Deploy New Website
+      hosts: web_server
+      vars:
+        websitename: websitename
+        password: password
+        db_password: db_password
+      become: true
+      tasks:
+            - name: Create new user
+              ansible.builtin.user:
+                name: "{{ websitename }}"
+                password: "{{ password | password_hash('sha512') }}"
+
+            - name: Create /logs directory
+              ansible.builtin.file:
+                path: "/home/{{ websitename }}/logs"
+                state: directory
+
+            - name: Create phpfpm_error.log file
+              ansible.builtin.file:
+                path: "/home/{{ websitename }}/logs/phpfpm_error.log"
+                state: touch
+
+            - name: Ensure permissions
+              ansible.builtin.file:
+                path: "/home/{{ websitename }}"
+                state: directory
+                recurse: yes
+                owner: "{{ websitename }}"
+                group: www-data
+                mode: "0755"
+
+            - name: Make sure mysqlclient is present
+              ansible.builtin.pip:
+                name: "{{ item }}"
+                state: present
+              with_items:
+                - pip
+                - mysqlclient
+
+            - name: Create new database
+              community.mysql.mysql_db:
+                name: "{{ websitename }}"
+                state: present
+                login_unix_socket: /run/mysqld/mysqld.sock
+
+            - name: Create new database user
+              community.mysql.mysql_user:
+                name: "{{ websitename }}"
+                password: "{{ db_password }}"
+                priv: '*.*:ALL'
+                state: present
+
+            - name: Add PHP config file
+              ansible.builtin.template:
+                src: templates/php_conf.j2
+                dest: "/etc/php/8.1/fpm/pool.d/{{ websitename }}.conf"
+
+            - name: Add NGINX config file
+              ansible.builtin.template:
+                src: templates/nginx_conf.j2
+                dest: "/etc/nginx/conf.d/{{ websitename }}.conf"
+
+            - name: Create /public_html directory
+              ansible.builtin.file:
+                path: "/home/{{ websitename }}/public_html"
+                state: directory
+                owner: "{{ websitename }}"
+                group: www-data
+                mode: "0755"
+
+            - name: WordPress setup
+              ansible.builtin.unarchive:
+                src: https://wordpress.org/latest.tar.gz
+                dest: "/home/{{ websitename }}/public_html"
+                remote_src: yes
+                owner: "{{ websitename }}"
+                group: www-data
+                extra_opts:
+                  - "--strip-component=1"
+
+            - name: Restart php8.1-fpm
+              ansible.builtin.systemd_service:
+                state: restarted
+                name: php8.1-fpm
+
+            - name: Restart nginx
+              ansible.builtin.systemd_service:
+                state: restarted
+                name: nginx
