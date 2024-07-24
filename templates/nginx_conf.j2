@@ -1,11 +1,11 @@
 server {
     listen       80;
-    server_name  www.{{ username }}.com;
+    server_name  www.{{ websitename }}.com;
 
     client_max_body_size 20m;
 
     index index.php index.html index.htm;
-    root   /home/{{ username }}/public_html;
+    root   /home/{{ websitename }}/public_html;
 
     location / {
         try_files $uri $uri/ /index.php?q=$uri&$args;
@@ -52,7 +52,7 @@ server {
 
 
             # General FastCGI handling
-            fastcgi_pass unix:/var/run/php/{{ username }}.sock;
+            fastcgi_pass unix:/var/run/php/{{ websitename }}.sock;
             fastcgi_pass_header Set-Cookie;
             fastcgi_pass_header Cookie;
             fastcgi_ignore_headers Cache-Control Expires Set-Cookie;
@@ -79,6 +79,6 @@ server {
 
 server {
     listen       80;
-    server_name  {{ username }}.com;
-    rewrite ^/(.*)$ http://www.{{ username }}.com/$1 permanent;
+    server_name  {{ websitename }}.com;
+    rewrite ^/(.*)$ http://www.{{ websitename }}.com/$1 permanent;
 }

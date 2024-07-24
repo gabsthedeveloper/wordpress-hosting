@@ -1,2 +1,2 @@
-[web_server]
-#add ip address here
+[web_servers]
+# add ip address here

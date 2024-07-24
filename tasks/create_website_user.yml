@@ -1,0 +1,23 @@
+- name: Create new user
+  ansible.builtin.user:
+    name: "{{ websitename }}"
+    password: "{{ user_password | password_hash('sha512') }}"
+
+- name: Create /logs directory
+  ansible.builtin.file:
+    path: "/home/{{ websitename }}/logs"
+    state: directory
+
+- name: Create phpfpm_error.log file
+  ansible.builtin.file:
+    path: "/home/{{ websitename }}/logs/phpfpm_error.log"
+    state: touch
+
+- name: Ensure permissions
+  ansible.builtin.file:
+    path: "/home/{{ websitename }}"
+    state: directory
+    recurse: yes
+    owner: "{{ websitename }}"
+    group: www-data
+    mode: "0755"

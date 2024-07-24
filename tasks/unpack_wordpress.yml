@@ -1,0 +1,17 @@
+- name: Create /public_html directory
+  ansible.builtin.file:
+    path: "/home/{{ websitename }}/public_html"
+    state: directory
+    owner: "{{ websitename }}"
+    group: www-data
+    mode: "0755"
+
+- name: Unpack wordpress
+  ansible.builtin.unarchive:
+    src: https://wordpress.org/latest.tar.gz
+    dest: "/home/{{ websitename }}/public_html"
+    remote_src: yes
+    owner: "{{ websitename }}"
+    group: www-data
+    extra_opts:
+      - "--strip-component=1"
