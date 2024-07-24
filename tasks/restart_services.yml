@@ -1,0 +1,9 @@
+- name: Restart php8.1-fpm
+  ansible.builtin.systemd_service:
+    state: restarted
+    name: php8.1-fpm
+
+- name: Restart nginx
+  ansible.builtin.systemd_service:
+    state: restarted
+    name: nginx

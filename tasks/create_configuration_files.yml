@@ -1,0 +1,9 @@
+- name: Add php configuration file
+  ansible.builtin.template:
+    src: "{{ playbook_dir }}/templates/php_conf.j2"
+    dest: "/etc/php/8.1/fpm/pool.d/{{ websitename }}.conf"
+
+- name: Add nginx configuration file
+  ansible.builtin.template:
+    src: "{{ playbook_dir }}/templates/nginx_conf.j2"
+    dest: "/etc/nginx/conf.d/{{ websitename }}.conf"
