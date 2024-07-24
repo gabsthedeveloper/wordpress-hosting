@@ -1,0 +1,20 @@
+- name: Install mysqlclient
+  ansible.builtin.pip:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - pip
+    - mysqlclient
+
+- name: Create new database
+  community.mysql.mysql_db:
+    name: "{{ websitename }}"
+    state: present
+    login_unix_socket: /run/mysqld/mysqld.sock
+
+- name: Create new database user
+  community.mysql.mysql_user:
+    name: "{{ websitename }}"
+    password: "{{ db_password }}"
+    priv: '*.*:ALL'
+    state: present
