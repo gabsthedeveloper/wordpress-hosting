@@ -1,3 +1,3 @@
 # WordPress Hosting
 ## Overview
-This project was created to automate the initial setup of a new website on my WordPress hosting platform. I used Ansible for this automation because it is an automation tool I have been wanting to apply on a personal project. I used Ansible tasks, rather than roles, to keep the project concise and because I do not see myself using this code outside of this project.
+This project was created to automate initial setup for new websites on my WordPress hosting platform. I used Ansible because it is an automation tool I have been wanting to use for a personal project. I used Ansible tasks, rather than roles, to keep the project concise and because I will only be using these tasks for this project.
