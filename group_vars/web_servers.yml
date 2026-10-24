@@ -1,3 +1,4 @@
 websitename: # Add website name here
+php_version: # Add php version number here (e.g. 8.3)
 user_password: # Add user password here
 db_password: # Add database password here
